@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="sv">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wiki Loves Monuments Sverige</title>
+    <link href="https://fornpunkt.se/static/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://fornpunkt.se/static/style.css">
+    <link rel="stylesheet" href="https://fornpunkt.se/static/ol-v7.2.2.css">
+</head>
+
+<body class="d-flex flex-column h-100">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">Wiki Loves Monuments</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
+                aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Öppna/stäng meny">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-between" id="navbarNavDropdown">
+                <ul class="navbar-nav"></ul>
+                <div>
+                    <a href="https://fornpunkt.se/" class="btn btn-sm btn-primary">Till FornPunkt</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+        <div class="is-fullscreen-map-page">
+          <h1 class="visually-hidden">Karta</h1>
+          <div class="full-height flex-shrink-0" id="map"></div>
+          <div id="zoom-in-alert" role="alert" class="alert alert-info alert-dismissible fade show" style="max-width: 600px;position: fixed;z-index: 999999;bottom: 1rem;right: 1rem;display: none;margin-left: 1rem;">
+              <h2 class="alert-heading h4">Utforska</h2>
+              <p>Zooma in i kartan för att se platser i Wiki Loves Monuments.</p>
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Stäng"></button>
+          </div>
+          <div class="callout" id="popup">
+            <button type="button" class="btn-close float-end" aria-label="Stäng"></button>
+            <ul class="nav nav-pills mb-3" id="popup-tab-buttons" role="tablist"></ul>
+            <div class="tab-content" id="popup-tab-content"></div>
+          </div>
+
+          <div class="offcanvas offcanvas-end" tabindex="-1" id="mapContentsSidebar" data-bs-scroll="true" data-bs-backdrop="false" aria-labelledby="mapContentsSidebarLabel">
+            <div class="offcanvas-header m-3">
+              <h5 class="offcanvas-title" id="mapContentsSidebarLabel">Kartans innehåll</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Stäng"></button>
+            </div>
+            <div class="offcanvas-body">
+              <div class="accordion accordion-flush" id="mapContentsAccordion">
+
+                <div class="accordion-item">
+                  <h2 class="accordion-header" id="header-active-layers">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#body-active-layers" aria-expanded="true" aria-controls="body-active-layers">
+                      Aktiva kartlager
+                    </button>
+                  </h2>
+                  <div id="body-active-layers" class="accordion-collapse collapse show" aria-labelledby="header-active-layers" data-bs-parent="#mapContentsAccordion">
+                    <div class="accordion-body">
+                      <form>
+                        <ul id="supportedLayerSelector" class="list-group list-group-flush"></ul>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="accordion-item">
+                  <h2 class="accordion-header" id="header-map-services">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#body-map-services" aria-expanded="false" aria-controls="body-map-services">
+                      Karttjänster (WMS, TMS, etc.)
+                    </button>
+                  </h2>
+                  <div id="body-map-services" class="accordion-collapse collapse" aria-labelledby="header-map-services" data-bs-parent="#mapContentsAccordion">
+                    <div class="accordion-body">
+                      <ul class="nav nav-pills" role="tablist">
+                        <li class="nav-item" role="presentation">
+                          <button class="nav-link active" id="wms-tab" data-bs-toggle="tab" data-bs-target="#wms" type="button" role="tab" aria-controls="WMS" aria-selected="false">WMS</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                          <button class="nav-link" id="xyz-tab" data-bs-toggle="tab" data-bs-target="#xyz" type="button" role="tab" aria-controls="XYZ" aria-selected="false">XYZ</button>
+                        </li>
+                      </ul>
+                      <div class="tab-content">
+                        <div class="tab-pane fade show active" id="wms" role="tabpanel" aria-labelledby="wms-tab">
+                          <form>
+                            <div class="mb-3">
+                              <label for="wms-url" class="col-form-label">GetCapabilities URL:</label>
+                              <input type="url" placeholder="https://example.com/wms?request=GetCapabilities" class="form-control" id="wms-url">
+                            </div>
+                            <div class="mb-3">
+                              <label for="wms-layer-name" class="col-form-label">Lager</label>
+                              <input type="text" id="wms-layer-name" placeholder="namn-på-lager" class="form-control">
+                            </div>
+                            <div class="mb-3">
+                              <label for="wms-version" class="col-form-label">WMS version</label>
+                              <select class="form-select" id="wms-version">
+                                <option value="1.1.1">1.1.1</option>
+                                <option value="1.3.0">1.3.0</option>
+                              </select>
+                            </div>
+                            <div class="modal-footer">
+                              <button id="wms-use" type="button" class="btn btn-primary">Använd</button>
+                            </div>
+                          </form>
+                        </div>
+                        <div class="tab-pane fade" id="xyz" role="tabpanel" aria-labelledby="xyz-tab">
+                          <form>
+                            <div class="mb-3">
+                              <label for="xyz-name" class="col-form-label">Namn:</label>
+                              <input type="text" placeholder="Namn (Valfritt för visning)" class="form-control" id="xyz-name">
+                            </div>
+                            <div class="mb-3">
+                              <label for="xyz-url" class="col-form-label">XYZ URL-mönster:</label>
+                              <input type="url" placeholder="https://example.com/{z}/{x}/{y}.png" class="form-control" id="xyz-url">
+                            </div>
+                            <div class="alert alert-info" role="alert">
+                              För TMS-stöd kan du ersätta <code>{y}</code> med <code>{-y}</code>.
+                            </div>
+                            <div class="modal-footer">
+                              <button id="xyz-use" type="button" class="btn btn-primary">Använd</button>
+                            </div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="accordion-item">
+                  <h2 class="accordion-header" id="header-interactive-layers">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#body-interactive-layers" aria-expanded="true" aria-controls="body-interactive-layers">
+                      Interaktiva kartlager
+                    </button>
+                  </h2>
+                  <div id="body-interactive-layers" class="accordion-collapse collapse" aria-labelledby="header-interactive-layers" data-bs-parent="#mapContentsAccordion">
+                    <div class="accordion-body">
+                      <form>
+                        <div class="form-check form-switch">
+                          <input class="form-check-input" type="checkbox" role="switch" id="dataLayerKMRPoints" checked onchange="toggleDataLayer(event)">
+                          <label class="form-check-label" for="dataLayerKMRPoints">Kulturmiljöregistret (punkter)</label>
+                        </div>
+                        <div class="form-check form-switch">
+                          <input class="form-check-input" type="checkbox" role="switch" id="dataLayerKMRGeo" checked onchange="toggleDataLayer(event)">
+                          <label class="form-check-label" for="dataLayerKMRGeo">Kulturmiljöregistret (geometrier)</label>
+                        </div>
+                        <div class="form-check form-switch">
+                          <input class="form-check-input" type="checkbox" role="switch" id="dataLayerWorkingLifeMuseum" checked onchange="toggleDataLayer(event)">
+                          <label class="form-check-label" for="dataLayerWorkingLifeMuseum">Arbetslivsmuseer</label>
+                        </div>
+                        <div class="form-check form-switch">
+                          <input class="form-check-input" type="checkbox" role="switch" id="dataLayerProtectedBuildings" checked onchange="toggleDataLayer(event)">
+                          <label class="form-check-label" for="dataLayerProtectedBuildings">Skyddade byggnader</label>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+                  <div class="accordion-item">
+                    <h2 class="accordion-header" id="header-search-layers">
+                      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#body-search-layers" aria-expanded="false" aria-controls="body-search-layers">
+                        Sök kartlager <span class="badge rounded-pill bg-danger ms-1">Beta</span>
+                      </button>
+                    </h2>
+                    <div id="body-search-layers" class="accordion-search collapse" aria-labelledby="header-search-layers" data-bs-parent="#mapContentsAccordion">
+                      <div class="accordion-body">
+                        <p class="alert alert-info">
+                          Denna funktion är under utveckling och är bara tillgäglig på FornPunkt.se.
+                        </p>
+                        <a href="https://fornpunkt.se/" class="btn btn-sm btn-primary">Till FornPunkt</a>
+                      </div>
+                    </div>
+                  </div>
+
+                <div class="accordion-item">
+                  <h2 class="accordion-header" id="header-file-layers">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#body-file-layers" aria-expanded="false" aria-controls="body-file-layers">
+                      Kartlager ifrån fil
+                    </button>
+                  </h2>
+                  <div id="body-file-layers" class="accordion-file collapse" aria-labelledby="header-file-layers" data-bs-parent="#mapContentsAccordion">
+                    <div class="accordion-body">
+                      <div class="drop-zone p-2">
+                        <label for="file-layer-input">Släpp en GPX eller GEOJSON fil här, eller klicka för att välja en fil</label>
+                        <input type="file" id="file-layer-input" accept=".gpx,.geojson" multiple />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
+              <div style="background: 0/cover url(https://fornpunkt.se/static/fp-contours.svg); transform: scale(-1); position: fixed; bottom: 0;"
+                  class="bg-primary d-print-none mt-auto py-5 w-100">
+                  <footer class="text-white container h5" style="transform: scale(-1);">
+                      hej@fornpunkt.se
+                  </footer>
+              </div>
+            </div>
+          </div>
+      </div>
+    </div>
+
+    <div class="toast-container p-3 end-0 bottom-0" aria-live="polite" aria-atomic="true"></div>
+    <script src="https://fornpunkt.se/static/bootstrap.min.js"></script>
+    <script src="https://fornpunkt.se/static/ol-v7.2.2.js"></script>
+    <script src="openlayers-shared.js"></script>
+    <script>
+        function showToast(message, color) {
+          const toast = `<div class="toast align-items-center text-bg-${color} border-0 show" role="alert">
+            <div class="d-flex">
+              <div class="toast-body">${message}</div>
+              <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Stäng"></button>
+            </div>
+          </div>`
+          document.querySelector('.toast-container').innerHTML = document.querySelector('.toast-container').innerHTML + toast;
+        }
+
+        [...document.querySelectorAll('.clipboardButton')].forEach(button => {
+            const input = button.previousElementSibling;
+            button.addEventListener('click', event => {
+                navigator.clipboard.writeText(input.value)
+                .then(() => {
+                    input.select();
+                    showToast('Kopierat!', 'secondary');
+                })
+                .catch(err => {
+                  showToast('Kopieringen misslyckades.', 'secondary');
+                    console.error('Could not copy text: ', err);
+                });
+            });
+        });
+
+        const zoomInAlertElm = document.getElementById('zoom-in-alert');
+        const bsAlert = bootstrap.Alert.getOrCreateInstance(zoomInAlertElm);
+        let zoomAlertIsDisplayed = true;
+        if (view.getZoom() < 12) {
+            zoomInAlertElm.style.display = 'block';
+            map.on('moveend', function() {
+                if (view.getZoom() >= 12 && zoomAlertIsDisplayed) {
+                    bsAlert.close();
+                    zoomAlertIsDisplayed = false;
+                }
+            });
+        }
+      </script>
+</body>
+
+</html>
