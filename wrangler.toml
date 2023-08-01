@@ -1,0 +1,7 @@
+main = "src/index.ts"
+compatibility_date = "2023-08-01"
+name = "wlm-karta"
+route = { pattern = "fornpunkt.se/wlm*", zone_name = "fornpunkt.se" }
+
+[site]
+bucket = "./public"
