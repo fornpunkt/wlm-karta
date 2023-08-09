@@ -731,6 +731,7 @@ map.on('singleclick', function (evt) {
   popup.style.display = 'none';
 
   if (view.getZoom() <= 12) return;
+  const clickedLatLon = ol.proj.transform(evt.coordinate, 'EPSG:3857', 'EPSG:4326');
 
   map.forEachFeatureAtPixel(evt.pixel, function(feature, layer) {
     const featureProps = feature.getProperties();
@@ -738,6 +739,7 @@ map.on('singleclick', function (evt) {
       featureProps.name,
       featureProps.identifier,
       featureProps.type,
+      clickedLatLon,
     );
   });
 
@@ -768,6 +770,7 @@ map.on('singleclick', function (evt) {
             KMRfeature.lamningstyp_namn + ' (' + KMRfeature.lamningsnummer + ')',
             KMRfeature.lamning_id,
             'site',
+            clickedLatLon,
           );
       });
     });
@@ -778,7 +781,7 @@ function popupIsOpen() {
   return (document.querySelector('#popup').style.display === 'block') ? true : false;
 }
 
-function renderPopupTab(title, id, type, active=false) {
+function renderPopupTab(title, id, type, coordinate, active=false) {
   let campaign, externalLinkPrefixes;
   switch (type) {
     case 'site':
@@ -799,7 +802,7 @@ function renderPopupTab(title, id, type, active=false) {
   tabContent.id = 'tab-content-' + id;
   tabContent.setAttribute('role', 'tabpanel');
   tabContent.setAttribute('aria-labelledby', 'tab-button-' + id);
-  tabContent.innerHTML = `<p>Visa i: ${externalLinkPrefixes.map(external => `<a href="${external[0]}${id}" target="_blank">${external[1]}</a> `)}</p>
+  tabContent.innerHTML = `<p>Visa i: ${externalLinkPrefixes.map(external => `<a href="${external[0]}${id}" target="_blank">${external[1]}</a>, `)} <a href="https://www.google.com/maps/search/?api=1&query=${coordinate[1]}%2C${coordinate[0]}" target="_blank">Google Maps</a></p>
   <div class="d-grid gap-2">
     <a href="https://commons.wikimedia.org/w/index.php?title=Special:UploadWizard&campaign=${campaign}&id=${id}" target="_blank" class="btn btn-primary">Ladda upp din bild!</a>
   </div>`;
@@ -815,17 +818,16 @@ function renderPopupTab(title, id, type, active=false) {
   tabButtonContainer.appendChild(tabButton);
 }
 
-function renderPopup(header, id, type) {
+function renderPopup(header, id, type, coordinate) {
   if (!header) return; // to deal with interactive editing layers
 
   var popup = document.querySelector('#popup');
-
   if (popupIsOpen()) {
-    renderPopupTab(header, id, type, false);
+    renderPopupTab(header, id, type, coordinate, false);
   } else {
     document.querySelector('#popup-tab-buttons').innerHTML = '';
     document.querySelector('#popup-tab-content').innerHTML = '';
-    renderPopupTab(header, id, type, id, true);
+    renderPopupTab(header, id, type, coordinate, true);
   }
 
   popup.style.display = 'block';
