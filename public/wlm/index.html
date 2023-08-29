@@ -19,7 +19,14 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse justify-content-between" id="navbarNavDropdown">
-                <ul class="navbar-nav"></ul>
+                <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#aboutModal">Om kartan</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="https://commons.wikimedia.org/wiki/Commons:Wiki_Loves_Monuments_2023_in_Sweden/sv" target="_blank">Till tävlingssidan</a>
+                  </li>
+                </ul>
                 <div>
                     <a href="https://fornpunkt.se/" class="btn btn-sm btn-primary">Till FornPunkt</a>
                 </div>
@@ -200,6 +207,34 @@
     </div>
 
     <div class="toast-container p-3 end-0 bottom-0" aria-live="polite" aria-atomic="true"></div>
+
+    <div class="modal fade" id="aboutModal" tabindex="-1" aria-labelledby="aboutModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="aboutModalLabel">Om kartan</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Stäng"></button>
+          </div>
+          <div class="modal-body">
+            <p>Detta är en variant av FornPunkts vanliga karta speciellt utvecklad för Wiki Loves Monuments. Den skilljer sig ifrån Wiki Loves Monuments listorna på Wikipedia och andra kartor genom att sträva mot att allt som ingår i Svenska Wiki Loves Monuments ska vara synligt.</p>
+
+            <h5>Källor</h5>
+            <ul>
+              <li>Kulturlämningar - Riksantikvarieämbets kulturmiljöregister</li>
+              <li>Byggnadsminnen - Wikidata</li>
+              <li>Arbetslivsmuseer - Wikidata</li>
+            </ul>
+
+            <p>Kartan utvecklas löpande och du får väldigt gärna ge återkoppling kring funktioner och problem.</p>
+          </div>
+          <div class="modal-footer justify-content-center">
+            <a href="https://github.com/fornpunkt/wlm-karta" target="_blank" class="btn btn-primary">Källkod (Github)</a>
+            <a href="https://commons.wikimedia.org/wiki/Commons:Wiki_Loves_Monuments_2023_in_Sweden/sv" target="_blank" class="btn btn-primary">Om Wiki Loves Monuments</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <script src="https://fornpunkt.se/static/bootstrap.min.js"></script>
     <script src="https://fornpunkt.se/static/ol-v7.2.2.js"></script>
     <script src="./openlayers-shared.js"></script>
