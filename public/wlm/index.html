@@ -277,6 +277,37 @@
             });
         }
       </script>
+      <script>
+      function countdownToSeptember() {
+          const now = new Date();
+          const currentMonth = now.getMonth();
+          const currentYear = now.getFullYear();
+  
+          // If it's already September, set target to next year's September 1st
+          const targetYear = currentMonth >= 8 ? currentYear + 1 : currentYear;
+          const targetDate = new Date(targetYear, 8, 1); // Month is 0-indexed, so 8 is September
+  
+          const timeDiff = targetDate - now;
+          const daysDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+  
+          if (currentMonth === 8) {
+              return 0;
+          } else {
+              return daysDiff;
+          }
+      }
+
+      // render a banner with the countdown before the nav bar
+      const daysUntilSeptember = countdownToSeptember();
+      if (daysUntilSeptember > 0) {
+          const banner = document.createElement('div');
+          banner.classList.add('alert', 'alert-info', 'show', 'border-0', 'rounded-0', 'mb-0', 'text-center', 'py-2', 'fs-6');
+          banner.innerHTML = `
+            <p class="m-0">Det är ${daysUntilSeptember} dagar kvar till Wiki Loves Monuments börjar!</p>
+          `;
+          document.body.insertBefore(banner, document.body.firstChild);
+      }
+    </script>
 </body>
 
 </html>
