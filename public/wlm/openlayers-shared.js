@@ -294,7 +294,12 @@ const protectedBuildingsSource = new ol.source.Vector({
           features: items,
         };
         const features = protectedBuildingsSource.getFormat().readFeatures(geojson);
-        protectedBuildingsSource.addFeatures(features);
+        features.forEach(feature => {
+          feature.setId(feature.get('item'));
+          if(!protectedBuildingsSource.getFeatureById(features[0].getId())) {
+            protectedBuildingsSource.addFeatures(features);
+          }
+        });
         success();
       })
       .catch(err => {
