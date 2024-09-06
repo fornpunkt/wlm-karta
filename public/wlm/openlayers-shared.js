@@ -811,7 +811,7 @@ function renderPopupTab(title, id, type, coordinate, active=false) {
   tabContent.id = 'tab-content-' + id;
   tabContent.setAttribute('role', 'tabpanel');
   tabContent.setAttribute('aria-labelledby', 'tab-button-' + id);
-  tabContent.innerHTML = `<p>Visa i: ${externalLinkPrefixes.map(external => `<a href="${external[0]}${id}" target="_blank">${external[1]}</a>, `)} <a href="https://www.google.com/maps/search/?api=1&query=${coordinate[1]}%2C${coordinate[0]}" target="_blank">Google Maps</a></p>
+  tabContent.innerHTML = `<p>Visa i: ${externalLinkPrefixes.map(external => `<a href="${external[0]}${id}" target="_blank">${external[1]}</a>`).join(', ')}, <a href="https://www.google.com/maps/search/?api=1&query=${coordinate[1]}%2C${coordinate[0]}" target="_blank">Google Maps</a></p>
   <div class="d-grid gap-2">
     <a href="https://commons.wikimedia.org/w/index.php?title=Special:UploadWizard&campaign=${campaign}&id=${id}" target="_blank" class="btn btn-primary">Ladda upp din bild!</a>
   </div>`;
