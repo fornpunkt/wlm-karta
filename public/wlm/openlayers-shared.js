@@ -257,17 +257,21 @@ const protectedBuildingsSource = new ol.source.Vector({
     const northEast = ol.proj.transform([extent[2], extent[3]], 'EPSG:3857', 'EPSG:4326');
 
     // query wikidata sparql service
-    const query = `SELECT ?item ?itemLabel ?coord ?sochID WHERE {
-      SERVICE wikibase:box {
-        ?item wdt:P625 ?coord.
-        bd:serviceParam wikibase:cornerWest "Point(${southWest[0]} ${southWest[1]})"^^geo:wktLiteral;
-          wikibase:cornerEast "Point(${northEast[0]} ${northEast[1]})"^^geo:wktLiteral.
-      }
-
-      ?item wdt:P1260 ?sochID .
-      ?item wdt:P1435 wd:Q24284072 .
-      SERVICE wikibase:label { bd:serviceParam wikibase:language "sv". }
-    }`;
+    const query = `SELECT ?item ?itemLabel ?coord (SAMPLE(?sochID) AS ?sochID) WHERE {
+  VALUES ?protectedClasses {
+    wd:Q24284072
+    wd:Q24284073
+  }
+  SERVICE wikibase:box {
+    ?item wdt:P625 ?coord.
+    bd:serviceParam wikibase:cornerWest "Point(${southWest[0]} ${southWest[1]})"^^geo:wktLiteral;
+      wikibase:cornerEast "Point(${northEast[0]} ${northEast[1]})"^^geo:wktLiteral.
+  }
+  ?item wdt:P1260 ?sochID;
+    wdt:P1435 ?protectedClasses.
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "sv". }
+}
+GROUP BY ?item ?itemLabel ?coord`;
     const url = 'https://query.wikidata.org/sparql?query=' + encodeURIComponent(query) + '&format=json';
     fetch(url)
       .then(response => response.json())
